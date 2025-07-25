@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            min-height: 100vh;
+            color: white;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: scale(1.03);
+        }
+        .btn-custom {
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn-custom:hover {
+            transform: scale(1.05);
+        }
+        #searchInput {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            border-radius: 8px;
+        }
+        #searchInput::placeholder {
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+<div class="container py-5">
+    <h2 class="text-center mb-4">Admin Dashboard</h2>
+
+    <!-- Action Buttons -->
+    <div class="text-center mb-4">
+        <a href="/admin/user/add" class="btn btn-success btn-custom mx-2">➕ Add User</a>
+        <a href="/admin/dashboard" class="btn btn-warning btn-custom mx-2">🔄 Refresh</a>
+    </div>
+
+    <!-- Search Input -->
+    <div class="mb-3 text-center">
+        <input type="text" id="searchInput" class="form-control w-50 mx-auto" placeholder="🔍 Search user by name or email">
+    </div>
+
+    <!-- User List -->
+    <div class="card p-3">
+        <h4 class="text-center mb-3">User List</h4>
+        <table class="table table-dark table-striped table-hover text-center align-middle" id="userTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Balance</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="u : ${users}">
+                <td th:text="${u.id}"></td>
+                <td th:text="${u.fullName}"></td>
+                <td th:text="${u.email}"></td>
+                <td th:text="${u.role}"></td>
+                <td th:text="${u.balance}"></td>
+                <td>
+                    <a th:href="@{'/admin/user/' + ${u.id}}" class="btn btn-info btn-sm btn-custom">👁 View</a>
+                    <a th:href="@{'/admin/user/edit/' + ${u.id}}" class="btn btn-primary btn-sm btn-custom">✏ Update</a>
+                    <a th:href="@{'/admin/user/delete/' + ${u.id}}"
+                       class="btn btn-danger btn-sm btn-custom"
+                       onclick="return confirm('Are you sure you want to delete this user?');">🗑 Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Back Button -->
+    <div class="text-center mt-4">
+        <a href="/login" class="btn btn-outline-light btn-custom">← logOut</a>
+    </div>
+</div>
+
+<!-- Searching Script -->
+<script>
+    document.getElementById("searchInput").addEventListener("keyup", function() {
+        let value = this.value.toLowerCase();
+        let rows = document.querySelectorAll("#userTable tbody tr");
+        rows.forEach(row => {
+            let name = row.querySelector("td:nth-child(2)").textContent.toLowerCase();
+            let email = row.querySelector("td:nth-child(3)").textContent.toLowerCase();
+            if (name.includes(value) || email.includes(value)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    });
+</script>
+</body>
+</html>

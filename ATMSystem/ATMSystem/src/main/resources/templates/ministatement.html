@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Mini Statement</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            color: #00ff90;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .printer-slot {
+            position: absolute;
+            top: 20px;
+            width: 300px;
+            height: 20px;
+            background: #111;
+            border-radius: 5px;
+            box-shadow: inset 0 0 5px #000;
+        }
+
+        .statement-box {
+            background: rgba(0, 0, 0, 0.85);
+            padding: 25px;
+            border-radius: 12px;
+            width: 500px;
+            box-shadow: 0 0 15px rgba(0,255,144,0.3);
+            border: 1px solid rgba(0,255,144,0.4);
+            transform: translateY(-120%);
+            animation: printDown 2s ease-out forwards;
+        }
+
+        @keyframes printDown {
+            0% { transform: translateY(-120%); }
+            100% { transform: translateY(0); }
+        }
+
+        .statement-box h3 {
+            text-align: center;
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        hr {
+            border: 1px dashed #00ff90;
+        }
+
+        .transaction {
+            padding: 8px 0;
+            border-bottom: 1px dashed #00ff90;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        .transaction:nth-child(1) { animation-delay: 1s; }
+        .transaction:nth-child(2) { animation-delay: 1.5s; }
+        .transaction:nth-child(3) { animation-delay: 2s; }
+        .transaction:nth-child(4) { animation-delay: 2.5s; }
+        .transaction:nth-child(5) { animation-delay: 3s; }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .transaction:last-child {
+            border-bottom: none;
+        }
+
+        .transaction p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .button-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            opacity: 0;
+            animation: fadeIn 1s 4s forwards;
+        }
+
+        .btn-outline-light {
+            border-color: #00ff90;
+            color: #00ff90;
+        }
+
+        .btn-outline-light:hover {
+            background-color: #00ff90;
+            color: black;
+        }
+
+        /* Qari buttons marka print la sameynayo */
+        @media print {
+            .button-row {
+                display: none !important;
+            }
+            body {
+                background: white;
+                color: black;
+            }
+            .statement-box {
+                box-shadow: none;
+                border: none;
+                background: white;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="printer-slot"></div>
+<div class="statement-box" id="statement">
+    <h3><i class="fas fa-receipt"></i> Mini Statement</h3>
+    <hr/>
+    <div th:if="${transactions}" th:each="tx,iter : ${transactions}" class="transaction">
+        <p><b th:text="${tx.type}">TYPE</b> - $<span th:text="${tx.amount}">0.0</span></p>
+        <p th:text="${tx.description}">Description</p>
+        <p th:text="${#temporals.format(tx.timestamp, 'yyyy-MM-dd HH:mm')}">Date</p>
+    </div>
+
+    <div class="button-row">
+        <a href="/dashboard" class="btn btn-outline-light"><i class="fas fa-arrow-left"></i> Back</a>
+        <button class="btn btn-outline-light" onclick="printReceipt()">
+            <i class="fas fa-print"></i> Print Receipt
+        </button>
+    </div>
+</div>
+
+<!-- Sound Effect -->
+<audio id="print-sound" autoplay>
+    <source src="https://www.soundjay.com/mechanical/printer-dot-matrix-1.mp3" type="audio/mpeg">
+</audio>
+
+<!-- JS Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
+
+<script>
+    function printReceipt() {
+        window.print();
+    }
+</script>
+</body>
+</html>
